@@ -7,7 +7,7 @@ pragma solidity >=0.8.2 <0.9.0;
  * @dev Store & retrieve value in a variable
  * @custom:dev-run-script ./scripts/deploy_with_ethers.ts
  */
-contract ReadENS  {
+contract ResolveENS  {
 
     address constant L1_SLOAD_ADDRESS = 0x0000000000000000000000000000000000000101;
     address constant ENS_PUBLIC_RESOLVER = 0x8FADE66B79cC9f707aB26799354482EB93a5B7dD;
