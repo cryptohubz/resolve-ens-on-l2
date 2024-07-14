@@ -73,6 +73,18 @@ Enabling ENS resolution on L2 chains promotes broader adoption and usage of ENS 
 #### Ecosystem Growth: 
 This solution contributes to the growth of the Ethereum and L2 ecosystems by enhancing interoperability and usability.
 
+### To-Do List
+**Extracting Version from recordVersions Slot:**
+* Identify and verify the storage slot layout for the **recordVersions** mapping.
+* Implement the function to correctly derive the storage slot for recordVersions[node].
+* Test the extraction of the version number using the l1sload precompile.
+
+**Supporting All Resolvers through a Unified Convention:**
+* Define a convention for calculating the storage slot numbers for recordVersions and versionable_addresses.
+* Ensure the resolver contract supports all types of records (e.g., addresses, text records, content hashes) using the unified slot retrieval method.
+* Test the resolver contract with various ENS record types to ensure compatibility and correctness.
+
+
 ### Conclusion
 The inability to resolve ENS names on L2 chains has been a significant limitation for developers and users. By leveraging Scroll's l1sload precompile, we have developed a solution that enables efficient and secure ENS name resolution on L2. This innovation not only enhances the flexibility and usability of L2-based smart contracts but also promotes broader adoption and growth within the Ethereum ecosystem.
 
