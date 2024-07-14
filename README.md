@@ -52,7 +52,7 @@ Constant Definitions
 
     }
 ```
-
+Source Code: https://github.com/cryptohubz/resolve-ens-on-l2/blob/main/EnsResolver.sol
 
 ## Benefits
 ### Enhanced Flexibility
@@ -90,5 +90,6 @@ The inability to resolve ENS names on L2 chains has been a significant limitatio
 
 ## Example Application
 An example application where this limitation becomes apparent is in the use of ENS names instead of hardcoded Ethereum addresses. Hardcoding addresses in smart contracts is not only cumbersome but also error-prone and inflexible. Using ENS names would provide a more user-friendly and flexible approach, but the inability to resolve these names on L2 chains is a major roadblock.
+Details: https://github.com/cryptohubz/resolve-ens-on-l2/blob/main/application_example.md
 
 
