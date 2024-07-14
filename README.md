@@ -19,8 +19,40 @@ Constant Definitions
 **ENS_PUBLIC_RESOLVER**: The address of the ENS Public Resolver contract on testnet.
 **COIN_TYPE**: A constant representing the default coin type (60 for Ethereum). 
 **SLOT**: A constant representing the storage slot index. We read the versianable_addressses slot which is slot number 2 for public ENS resolver (https://evm.storage/eth/20301910/0x231b0ee14048e9dccd1d247744d114a4eb5e8e63#map)
-
 **RECORD_VERSION**: A constant representing the record version. Record version can also be extracted from the L1 slot 0 of the same contract for the corresponding name hash.
+
+**Function to Resolve ENS**
+
+```
+    function resolveENS(bytes32 node) public view returns (address) {
+        //Calculate the slot for the top-level mapping (version)
+        bytes32 topSlot = keccak256(abi.encodePacked(uint256(RECORD_VERSION), uint256(SLOT)));
+
+        //Calculate the slot for the second-level mapping (node)
+        bytes32 middleSlot = keccak256(abi.encodePacked(node, topSlot));
+
+        //Calculate the slot for the innermost mapping (coinType)
+        bytes32 finalSlot = keccak256(abi.encodePacked(COIN_TYPE, middleSlot));
+
+        bytes memory input = abi.encodePacked(ENS_PUBLIC_RESOLVER, finalSlot);
+
+        bool success;
+        bytes memory result;
+        address resolved;
+
+        (success, result) = L1_SLOAD_ADDRESS.staticcall(input);
+
+        if (!success) {
+            revert("L1SLOAD failed");
+        }
+
+        resolved = getAddressFromBytes(result);
+
+        return resolved;
+
+    }
+```
+
 
 ## Benefits
 ### Enhanced Flexibility
