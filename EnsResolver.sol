@@ -7,81 +7,64 @@ pragma solidity >=0.8.2 <0.9.0;
  * @dev Store & retrieve value in a variable
  * @custom:dev-run-script ./scripts/deploy_with_ethers.ts
  */
-
- import "hardhat/console.sol";
-
-
-
-contract ResolveENS {
-    event LogMessage(string message);
-
+contract ReadENS  {
 
     address constant L1_SLOAD_ADDRESS = 0x0000000000000000000000000000000000000101;
-    uint256 constant DEFAULT_COIN_TYPE = 60;
+    address constant ENS_PUBLIC_RESOLVER = 0x8FADE66B79cC9f707aB26799354482EB93a5B7dD;
+    uint256 constant COIN_TYPE = 60;
+    uint256 constant SLOT = 2;
+    uint256 constant RECORD_VERSION = 0;
 
-    function retrieveSlotFromL1(address l1StorageAddress, uint slot) internal view returns (bytes memory) {
-        bool success;
-        bytes memory returnValue;
-        (success, returnValue) = L1_SLOAD_ADDRESS.staticcall(abi.encodePacked(l1StorageAddress, slot));
-        if(!success)
-        {
-            revert("L1SLOAD failed");
-        }
-        return returnValue;
-    }
 
-      function resolveEnsName(address l1_contract, bytes32 node, uint256 slot, uint256 recordVersion, uint256 coinType) public view returns (bytes memory) {
+    function resolveENS(bytes32 node) public view returns (address) {
         //Calculate the slot for the top-level mapping (version)
-        bytes32 topSlot = keccak256(abi.encodePacked(uint256(recordVersion), uint256(slot)));
+        bytes32 topSlot = keccak256(abi.encodePacked(uint256(RECORD_VERSION), uint256(SLOT)));
 
         //Calculate the slot for the second-level mapping (node)
         bytes32 middleSlot = keccak256(abi.encodePacked(node, topSlot));
 
         //Calculate the slot for the innermost mapping (coinType)
-        uint256 finalSlot = uint256(keccak256(abi.encodePacked(coinType, middleSlot)));
-        return abi.decode(retrieveSlotFromL1(
-            l1_contract,
-            finalSlot
-            ), (bytes));
-    }
-  
-      function toString(uint256 value) internal pure returns (string memory) {
-        // Inspired by OraclizeAPI's implementation - MIT license
-        if (value == 0) {
-            return "0";
+        bytes32 finalSlot = keccak256(abi.encodePacked(COIN_TYPE, middleSlot));
+
+        bytes memory input = abi.encodePacked(ENS_PUBLIC_RESOLVER, finalSlot);
+
+        bool success;
+        bytes memory result;
+        address resolved;
+
+        (success, result) = L1_SLOAD_ADDRESS.staticcall(input);
+
+        if (!success) {
+            revert("L1SLOAD failed");
         }
-        uint256 temp = value;
-        uint256 digits;
-        while (temp != 0) {
-            digits++;
-            temp /= 10;
-        }
-        bytes memory buffer = new bytes(digits);
-        while (value != 0) {
-            digits -= 1;
-            buffer[digits] = bytes1(uint8(48 + uint256(value % 10)));
-            value /= 10;
-        }
-        return string(buffer);
+
+        resolved = getAddressFromBytes(result);
+
+        return resolved;
+
     }
 
-    function convertBytesToBytes32Array(bytes memory data) private pure returns (bytes32[] memory) {
-        // Calculate the number of 32-byte chunks
-        uint256 length = data.length;
-        uint256 numChunks = (length + 31) / 32;
-
-        // Create a new bytes32 array
-        bytes32[] memory result = new bytes32[](numChunks);
-
-        // Loop through the data and fill the bytes32 array
-        for (uint256 i = 0; i < numChunks; i++) {
-            bytes32 chunk;
-            assembly {
-                chunk := mload(add(data, add(32, mul(i, 32))))
-            }
-            result[i] = chunk;
+    function bytesToBytes32(bytes memory source) private pure returns (bytes32 result) {
+        if (source.length == 0) {
+            return 0x0;
         }
-        return result;
+        assembly {
+            result := mload(add(source, 32))
+        }
+    }
+
+    function bytes32ToAddress(bytes32 _data) private pure returns (address) {
+        address addr;
+        assembly {
+            // Extract the leftmost 20 bytes from _data
+            addr := shr(96, _data) // Shift right by 96 bits (12 bytes) to get the leftmost 20 bytes
+        }
+        return addr;
+    }
+
+    function getAddressFromBytes(bytes memory source) private pure returns (address) {
+        bytes32 data = bytesToBytes32(source);
+        return bytes32ToAddress(data);
     }
 
 }
