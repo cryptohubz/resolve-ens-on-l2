@@ -35,4 +35,7 @@ Enabling ENS resolution on L2 chains promotes broader adoption and usage of ENS 
 #### Ecosystem Growth: 
 This solution contributes to the growth of the Ethereum and L2 ecosystems by enhancing interoperability and usability.
 
+### Conclusion
+The inability to resolve ENS names on L2 chains has been a significant limitation for developers and users. By leveraging Scroll's l1sload precompile, we have developed a solution that enables efficient and secure ENS name resolution on L2. This innovation not only enhances the flexibility and usability of L2-based smart contracts but also promotes broader adoption and growth within the Ethereum ecosystem.
+
 
