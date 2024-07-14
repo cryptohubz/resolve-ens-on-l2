@@ -17,7 +17,7 @@ This contract, ResolveENSName, is designed to resolve ENS (Ethereum Name Service
 Constant Definitions
 **L1_SLOAD_ADDRESS**: The address of a scroll precompiled contract used to load storage from L1 (Layer 1) on testnet.
 **ENS_PUBLIC_RESOLVER**: The address of the ENS Public Resolver contract on testnet.
-**COIN_TYPE**: A constant representing the default coin type (60 for Ethereum). 
+**COIN_TYPE**: A constant representing the default coin type (60 for Ethereum). The contract can be extended to accept coinType as parameter.  
 **SLOT**: A constant representing the storage slot index. We read the versianable_addressses slot which is slot number 2 for public ENS resolver (https://evm.storage/eth/20301910/0x231b0ee14048e9dccd1d247744d114a4eb5e8e63#map)
 **RECORD_VERSION**: A constant representing the record version. Record version can also be extracted from the L1 slot 0 of the same contract for the corresponding name hash.
 
